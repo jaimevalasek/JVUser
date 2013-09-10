@@ -43,7 +43,7 @@ class Auth extends Usuario
 			return 'usuario_bloqueado';
 		}
 		
-		$sessao = $this->getServiceLocator()->get('user_session_usuarios');
+		$sessao = $this->getServiceLocator()->get('jvuser_session_usuarios');
 		$sessao->offsetSet('usuario', $resultRow);
 		
 		return 'logado';
@@ -64,7 +64,7 @@ class Auth extends Usuario
 	    }
 	     
 	    $resource = $controllerName . '.' . $actionName;
-	    $acl = $this->getServiceLocator()->get('user_service_acl')->build();
+	    $acl = $this->getServiceLocator()->get('jvuser_service_acl')->build();
 	     
 	    if ($acl->isAllowed($role, $resource)) {
 	        return true;
@@ -76,7 +76,7 @@ class Auth extends Usuario
 	public function logout()
 	{
 		$auth = new AuthenticationService();
-		$session = $this->getServiceLocator()->get('user_session_usuarios');
+		$session = $this->getServiceLocator()->get('jvuser_session_usuarios');
 		$session->offsetUnset('usuario');
 		$auth->clearIdentity();
 		
@@ -129,7 +129,7 @@ class Auth extends Usuario
 	
 	public function UserAuthentication()
 	{
-		$sessao = $this->getServiceLocator()->get('user_session_usuarios');
+		$sessao = $this->getServiceLocator()->get('jvuser_session_usuarios');
 		return $sessao->offSetGet('usuario');
 	}
 	

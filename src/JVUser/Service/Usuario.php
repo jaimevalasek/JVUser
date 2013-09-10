@@ -6,17 +6,17 @@ use JVBase\Service\AbstractService;
 
 class Usuario extends AbstractService
 {
-	protected $entityMapper = 'user_mapper_usuarios';
+	protected $entityMapper = 'jvuser_mapper_usuarios';
 	
 	public function insert($data) 
 	{
 		$token = $this->getServiceLocator()->get('jvbase_filter_token');
 		$basedate = $this->getServiceLocator()->get('jvbase_filter_basedate');
 		
-		$data['status_usuario'] = false;
+		$data['status_usuario'] = true;
 		$data['dta_inc_usuario'] = $basedate->dbNow();
 		$data['token_usuario'] = md5($token->microtimeToken());
-		$data['papel_usuario'] = 'visitante';
+		$data['papel_usuario'] = 'usuario';
 		$data['bloqueado_usuario'] = 0;
 		$data['senha_usuario'] = md5($data['senha_usuario']);
 		

@@ -12,7 +12,7 @@ class Permissoes extends AbstractHelper
         $container = new Container('sessao');
         
         return array(
-            'permissoes' => $container->permissoes
+            'permissoes' => $container->permissoes,
         );
     }
 }

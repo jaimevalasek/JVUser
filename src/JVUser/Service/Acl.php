@@ -58,7 +58,7 @@ class Acl implements ServiceManagerAwareInterface
         }
 
     	if (!$cacheSuccess) {
-	    	$usuarioService = $this->getServiceManager()->get('user_service_usuarios');
+	    	$usuarioService = $this->getServiceManager()->get('jvuser_service_usuarios');
 	    	$config = $usuarioService->getAcl();
 	    	
 	    	$configCache = json_encode($config);
@@ -68,7 +68,7 @@ class Acl implements ServiceManagerAwareInterface
     	}
     	
     	
-    	$authService = $this->getServiceManager()->get('user_service_auth');
+    	$authService = $this->getServiceManager()->get('jvuser_service_auth');
     	$role = $authService->getRole();
     	
     	$arrPermissoes = array('allow' => array(), 'deny' => array());

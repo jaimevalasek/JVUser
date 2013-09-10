@@ -2,19 +2,48 @@
 
 namespace JVUser\Controller;
 
+use JVUser\Form\Usuario;
+
 use Zend\Validator\AbstractValidator;
 use Zend\View\Model\ViewModel;
 use Zend\Mvc\Controller\AbstractActionController;
 
 class IndexController extends AbstractActionController
 {
+    public function generateAction()
+    {
+        $response = $this->getResponse();
+        $response->getHeaders()->addHeaderLine('Content-Type', "image/png");
+    
+        $id = $this->params('id', false);
+    
+        if ($id) {
+    
+            $image = './data/captcha/' . $id;
+    
+            if (file_exists($image) !== false) {
+                $imagegetcontent = @file_get_contents($image);
+    
+                $response->setStatusCode(200);
+                $response->setContent($imagegetcontent);
+    
+                if (file_exists($image) == true) {
+                    unlink($image);
+                }
+            }
+    
+        }
+    
+        return $response;
+    }
+    
 	public function indexAction()
 	{
 		if ($this->flashMessenger()->hasMessages()) {
 			$this->getServiceLocator()->get('jv_flashmessenger');
 		}
 		
-		$authService = $this->getServiceLocator()->get('user_service_auth');
+		$authService = $this->getServiceLocator()->get('jvuser_service_auth');
 		
 		return new ViewModel(array(
 			'usuario' => $authService->UserAuthentication()
@@ -23,18 +52,18 @@ class IndexController extends AbstractActionController
 	
 	public function registerAction() 
 	{
-		$form = $this->getServiceLocator()->get('user_form_usuarios');
+		$form = new Usuario($this->getRequest()->getBaseUrl().'/user/index/generate/');
 		$request = $this->getRequest();
 
 		if ($request->isPost()) {
-			AbstractValidator::setDefaultTranslator($this->getServiceLocator()->get('translator'));
+			AbstractValidator::setDefaultTranslator($this->getServiceLocator()->get('MvcTranslator'));
 			$form->setData($request->getPost());
-			$form->setInputFilter($this->getServiceLocator()->get('user_filter_usuarios'));
+			$form->setInputFilter($this->getServiceLocator()->get('jvuser_filter_usuarios'));
 			
 			if ($form->isValid()) {
-				$usuarioService = $this->getServiceLocator()->get('user_service_usuarios');
+				$usuarioService = $this->getServiceLocator()->get('jvuser_service_usuarios');
 				if ($usuarioService->insert($form->getData())) {
-					$this->flashMessenger()->addMessage(array('success' => 'O seu cadastro foi efetuado com sucesso. <br />Agora acesse o seu email e clique no link de ativação do cadastro!'));
+					$this->flashMessenger()->addMessage(array('success' => 'O seu cadastro foi efetuado com sucesso.'));
 					$this->redirect()->toUrl('/auth');
 				}
 			}
@@ -55,25 +84,25 @@ class IndexController extends AbstractActionController
 			$this->getServiceLocator()->get('jv_flashmessenger');
 		}
 
-		$form = $this->getServiceLocator()->get('user_form_auth');
+		$form = $this->getServiceLocator()->get('jvuser_form_auth');
 		$request = $this->getRequest();
 		
 		if ($request->isPost())
 		{
-			AbstractValidator::setDefaultTranslator($this->getServiceLocator()->get('translator'));
+			AbstractValidator::setDefaultTranslator($this->getServiceLocator()->get('MvcTranslator'));
 			$form->setData($request->getPost());
-			$form->setInputFilter($this->getServiceLocator()->get('user_filter_auth'));
+			$form->setInputFilter($this->getServiceLocator()->get('jvuser_filter_auth'));
 			
 			if ($form->isValid())
 			{
-				$authService = $this->getServiceLocator()->get('user_service_auth');
+				$authService = $this->getServiceLocator()->get('jvuser_service_auth');
 				$result = $authService->authenticate($form->getData());
 				if ($result == 'logado') {
 					$this->flashMessenger()->addMessage(array('success' => 'Usuario logado com sucesso!'));
 					if (strlen($redirect) > 2) {
 						return $this->redirect()->toUrl($redirect);
 					}
-					$this->redirect()->toUrl('/user');
+					$this->redirect()->toUrl('/');
 				} else if($result == 'login_invalido') {
 					$this->flashMessenger()->addMessage(array('error' => 'Erro ao tentar logar no sistema, dados inválidos. <br />Obs.: Lembre-se que para fazer a autenticação você deve confirmar o seu cadastro, caso seja esse o motivo, verifique o seu email!'));
 					$this->redirect()->toUrl('/auth');
@@ -100,7 +129,7 @@ class IndexController extends AbstractActionController
 	public function activateAction()
 	{
 		$token = $this->params('token');
-		$usuarioService = $this->getServiceLocator()->get('user_service_usuarios');
+		$usuarioService = $this->getServiceLocator()->get('jvuser_service_usuarios');
 		
 		if ($usuarioService->findRow(array('token_usuario' => $token, 'status_usuario' => true))) {
 			$this->flashMessenger()->addMessage(array('alert' => 'Usuário já ativado!'));
@@ -120,7 +149,7 @@ class IndexController extends AbstractActionController
 	
 	public function logoutAction()
 	{
-		$authService = $this->getServiceLocator()->get('user_service_auth');
+		$authService = $this->getServiceLocator()->get('jvuser_service_auth');
 		if ($authService->logout()) {
 			$this->flashMessenger()->addMessage(array('success' => 'Você fez o logout do sistema com sucesso!'));
 			return $this->redirect()->toUrl('/auth');

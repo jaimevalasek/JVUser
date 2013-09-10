@@ -49,7 +49,7 @@ class Module
     	// Pega as configurações para verificar se pode usar acl e manda para o método authirize
     	$config = include __DIR__ . '/config/module.config.php';
     
-    	$authService = $di->get('user_service_auth');
+    	$authService = $di->get('jvuser_service_auth');
     	if (!$authService->authorize($moduleName, $controllerName, $actionName, $config['useAcl'])) {
     		
     		$flashMessenger = $event->getTarget()->flashMessenger();

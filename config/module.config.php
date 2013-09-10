@@ -33,6 +33,19 @@ return array(
                     ),
                 ),
             ),
+		    'captcha_form_generate' => array(
+		        'type'    => 'segment',
+		        'options' => array(
+		            'route'    =>  '/user/captcha/[:id]',
+		            'constraints' => array(
+		                'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+		            ),
+		            'defaults' => array(
+		                'controller' => 'JVUser\Controller\Index',
+		                'action'     => 'generate',
+		            ),
+		        ),
+		    ),
 			'cadastre-se' => array(
 				'type'    => 'Literal',
 				'options' => array(
@@ -97,19 +110,19 @@ return array(
 	),
 	'service_manager' => array(
 		'invokables' => array(
-			'user_mapper_usuarios' => 'JVUser\Mapper\Usuario',
-			'user_service_usuarios' => 'JVUser\Service\Usuario',
-			'user_service_auth' => 'JVUser\Service\Auth',
-			'user_service_acl' => 'JVUser\Service\Acl',
-			'user_model_usuarios' => 'JVUser\Model\Usuario',
-			'user_filter_usuarios' => 'JVUser\Filter\Usuario',
-			'user_filter_auth' => 'JVUser\Filter\Auth',
-			'user_form_usuarios' => 'JVUser\Form\Usuario',
-			'user_form_auth' => 'JVUser\Form\Auth',
+			'jvuser_mapper_usuarios' => 'JVUser\Mapper\Usuario',
+			'jvuser_service_usuarios' => 'JVUser\Service\Usuario',
+			'jvuser_service_auth' => 'JVUser\Service\Auth',
+			'jvuser_service_acl' => 'JVUser\Service\Acl',
+			'jvuser_model_usuarios' => 'JVUser\Model\Usuario',
+			'jvuser_filter_usuarios' => 'JVUser\Filter\Usuario',
+			'jvuser_filter_auth' => 'JVUser\Filter\Auth',
+			'jvuser_form_usuarios' => 'JVUser\Form\Usuario',
+			'jvuser_form_auth' => 'JVUser\Form\Auth',
 		),
 		'factories' => array(
 			'translator' => 'Zend\I18n\Translator\TranslatorServiceFactory',
-			'user_session_usuarios' => function ($sm) {
+			'jvuser_session_usuarios' => function ($sm) {
 				return new Container('auth');
 			},
 		),
@@ -117,6 +130,7 @@ return array(
 	'view_helpers' => array(
 	    'invokables' => array(
 	        'permissoes' => 'JVUser\View\Helper\Permissoes',
+	        'jvuseridentity' => 'JVUser\View\Helper\JVUserIdentity',
 	    )
 	),
 	'view_manager' => array(
